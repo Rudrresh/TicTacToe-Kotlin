@@ -1,0 +1,105 @@
+package tictactoe
+import kotlin.math.abs
+fun main() {
+    printBorder()
+    repeat(3) {
+        println("|       |")
+    }
+    printBorder()
+    val grid = mutableListOf(
+        mutableListOf(' ',' ',' '),
+        mutableListOf(' ',' ',' '),
+        mutableListOf(' ',' ',' ')
+    )
+    var correctInput = false
+    var gameOver = false
+    val correctValue = mutableListOf(1, 2, 3)
+    var moveCount = 0
+    while (!gameOver && moveCount <= 9)  {
+        do {
+            val (x, y) = readln().split(" ").map { it.toInt() }
+            if (x > 3 || y > 3 || x < 1 || y < 1) { println("Coordinates should be from 1 to 3!") 
+            } else if (grid[x - 1][y - 1] == 'X' || grid[x - 1][y - 1] == 'O')  { println("This cell is occupied! Choose another one!") 
+            } else if(x in correctValue && y in correctValue) {
+                if(moveCount % 2 == 1) {
+                    grid[x - 1][y - 1] = 'X'
+                    correctInput = true
+                    moveCount++
+                }
+                else {
+                    grid[x - 1][y - 1] = 'O'
+                    correctInput = true
+                    moveCount++
+                }
+            } else println("You should enter numbers!")
+        } while(!correctInput)
+        
+        // printing the grid
+        printBorder()
+        println("| ${grid[0][0]} ${grid[0][1]} ${grid[0][2]} |")
+        println("| ${grid[1][0]} ${grid[1][1]} ${grid[1][2]} |")
+        println("| ${grid[2][0]} ${grid[2][1]} ${grid[2][2]} |")
+        printBorder()
+        // Result of the game
+        if (moveCount < 5) continue
+        else if (moveCount <= 9) {
+            var input = convertToString(grid)
+            var a = input[0]
+            var b = input[1]
+            var c = input[2]
+            var d = input[3]
+            var e = input[4]
+            var f = input[5]
+            var g = input[6]
+            var h = input[7]
+            var i = input[8]
+            // all the possible win cases
+            val row1Win = (a == b && b == c)
+            val row2Win = (d == e && e == f)
+            val row3Win = (g == h && h == i)
+            val col1Win = (a == d && d == g)
+            val col2Win = (b == e && e == h)
+            val col3Win = (c == f && f == i)
+            val dia1Win = (a == e && e == i)
+            val dia2Win = (g == e && e == c)
+    
+            // logic for X or O winning or drawing
+            val rowWinX = (row1Win && b == 'X') || (row2Win && e == 'X') || (row3Win && h == 'X')
+            val columnWinX = (col1Win && d == 'X') || (col2Win && e == 'X') || (col3Win && f == 'X')
+            val diagonalWinX = (dia1Win && e == 'X') || (dia2Win && e == 'X')
+            val rowWinO = (row1Win && b == 'O') || (row2Win && e == 'O') || (row3Win && h == 'O')
+            val columnWinO = (col1Win && d == 'O') || (col2Win && e == 'O') || (col3Win && f == 'O')
+            val diagonalWinO = (dia1Win && e == 'O') || (dia2Win && e == 'O')
+            val xWins = (rowWinX || columnWinX || diagonalWinX) 
+            val oWins = (rowWinO || columnWinO || diagonalWinO) 
+            
+            // Logic for result of the game
+            if (xWins && !oWins) { 
+                println("X wins") 
+                gameOver = true
+            }
+            else if (oWins && !xWins) { 
+                println("O wins")
+                gameOver = true
+            }
+            else if (moveCount >= 9 && (!xWins && !oWins)) { 
+                println("Draw")    
+                gameOver = true
+                break
+            }
+        }
+    }
+}
+fun printBorder() {
+    val bor = "-"
+    println("${bor.repeat(9)}")
+}
+fun convertToString(arg: MutableList<MutableList<Char>>) : String {
+    var str = ""
+    for (i in 0..2) {
+        for (j in 0..2) {
+            str += arg[i][j]
+        }
+    }
+    return str
+}
